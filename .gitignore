@@ -1,2 +1,6 @@
 Logs/
+*.aux
+*.log
+*.nav
+*.synctex.gz
 
