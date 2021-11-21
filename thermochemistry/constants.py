@@ -16,6 +16,4 @@ m_e = unyt.electron_mass_cgs
 # Threshold at which we assume gas fully ionized
 T_thresh = 1e5 * unyt.K
 # adiabatic index
-gamma = 5./3.
-
-
+gamma = 5.0 / 3.0

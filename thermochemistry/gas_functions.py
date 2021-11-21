@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-#------------------------------------
+# ------------------------------------
 # Gas related functions
-#------------------------------------
+# ------------------------------------
 
 import constants
 import numpy as np
+
 
 def mean_molecular_weight(XH0, XHp, XHe0, XHep, XHepp):
     """
@@ -29,9 +30,10 @@ def mean_molecular_weight(XH0, XHp, XHe0, XHep, XHepp):
     # A_He   = 4, E_He   = 0
     # A_Hep  = 4, E_Hep  = 1
     # A_Hepp = 4, E_Hepp = 2
-    one_over_mu = XH0 + 2 * XHp  + 0.25 * XHe0 + 0.5 * XHep + 0.75 * XHepp 
+    one_over_mu = XH0 + 2 * XHp + 0.25 * XHe0 + 0.5 * XHep + 0.75 * XHepp
 
-    return 1./one_over_mu
+    return 1.0 / one_over_mu
+
 
 def gas_temperature(u, mu):
     """
@@ -46,6 +48,7 @@ def gas_temperature(u, mu):
 
     return T
 
+
 def internal_energy(T, mu):
     """
     Compute the internal energy of the gas for a given
@@ -56,6 +59,7 @@ def internal_energy(T, mu):
 
     u = constants.kB * T / (constants.gamma - 1) / (mu * constants.m_u)
     return u
+
 
 def internal_energy_derivative(T, mu):
     """
@@ -80,54 +84,90 @@ def get_number_densities(Temp, XH, XHe):
     XHe: total mass fraction of all helium species (HeI + HeII + HeIII)
     """
 
-    y = XHe / (4. - 4. * XHe)
+    y = XHe / (4.0 - 4.0 * XHe)
 
     if Temp < constants.T_thresh:
         nH0 = XH
-        nHp = 0.
+        nHp = 0.0
         nHe0 = y * XH
-        nHep = 0.
-        nHepp = 0.
+        nHep = 0.0
+        nHepp = 0.0
 
     else:
 
         Temp.convert_to_cgs()
         T = Temp.v
         # Recombination rate for H+ in units of cm^3 s^-1
-        A_Hp = 8.40e-11 / np.sqrt(T) * (T*1e-3)**(-0.2)  * 1./(1. + (T*1e-6)**0.7)
+        A_Hp = (
+            8.40e-11
+            / np.sqrt(T)
+            * (T * 1e-3) ** (-0.2)
+            * 1.0
+            / (1.0 + (T * 1e-6) ** 0.7)
+        )
         # TODO: DOC
-        A_d = 1.9e-3 / T**1.5 * np.exp(-470000.0 / T) * (1. + 0.3 * np.exp(-94000. / T))
+        A_d = (
+            1.9e-3
+            / T ** 1.5
+            * np.exp(-470000.0 / T)
+            * (1.0 + 0.3 * np.exp(-94000.0 / T))
+        )
         # Recombination rate for He+ in units of cm^3 s^-1
-        A_Hep = 1.5e-10 / T**0.6353
+        A_Hep = 1.5e-10 / T ** 0.6353
         # Recombination rate for He++ in units of cm^3 s^-1
-        A_Hepp = 3.36e-10 / np.sqrt(T)  * (T*1e-3)**(-0.2) * 1./(1. + (T*1e-6)**0.7)
+        A_Hepp = (
+            3.36e-10
+            / np.sqrt(T)
+            * (T * 1e-3) ** (-0.2)
+            * 1.0
+            / (1.0 + (T * 1e-6) ** 0.7)
+        )
         # ionization rate for H0 in units of cm^3 s^-1
         #  G_H0 = 1.17e-10 * np.sqrt(T) * np.exp(-157809.1 / T) * 1. / (1. + np.sqrt(T*1e-5))
-        G_H0 = 5.85e-11 * np.sqrt(T) * np.exp(-157809.1 / T) * 1. / (1. + np.sqrt(T*1e-5))
+        G_H0 = (
+            5.85e-11
+            * np.sqrt(T)
+            * np.exp(-157809.1 / T)
+            * 1.0
+            / (1.0 + np.sqrt(T * 1e-5))
+        )
         # TODO: DOC
-        G_He0 = 2.38e-11 * np.sqrt(T) * np.exp(-285335.4 / T) * 1. / (1. + np.sqrt(T*1e-5))
+        G_He0 = (
+            2.38e-11
+            * np.sqrt(T)
+            * np.exp(-285335.4 / T)
+            * 1.0
+            / (1.0 + np.sqrt(T * 1e-5))
+        )
         # TODO: DOC
-        G_Hep = 5.68e-12 * np.sqrt(T) * np.exp(-631515.0 / T) * 1. / (1. + np.sqrt(T*1e-5))
+        G_Hep = (
+            5.68e-12
+            * np.sqrt(T)
+            * np.exp(-631515.0 / T)
+            * 1.0
+            / (1.0 + np.sqrt(T * 1e-5))
+        )
 
         # Katz et al. 1996 eq. 33 - 38
         # Note: We assume all photoionization rates to be zero.
-        # Also, here we don't care about the actual number density, i.e. 
+        # Also, here we don't care about the actual number density, i.e.
         # about the volume, since it'll cancel out later when we compute
         # the mass fractions.
         nH = XH
         nHe = XHe
 
-        nH0 = nH * A_Hp / (A_Hp + G_H0);
-        nHp = nH - nH0;
-        nHep = y * nH / (1. + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp);
-        nHe0 = nHep * (A_Hep + A_d) / G_He0;
-        nHepp = nHep * G_Hep / A_Hepp;
+        nH0 = nH * A_Hp / (A_Hp + G_H0)
+        nHp = nH - nH0
+        nHep = y * nH / (1.0 + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp)
+        nHe0 = nHep * (A_Hep + A_d) / G_He0
+        nHepp = nHep * G_Hep / A_Hepp
 
     # electron density
-    ne = nHp + nHep + 2. * nHepp
+    ne = nHp + nHep + 2.0 * nHepp
 
     # TODO: check units here
     return nH0, nHp, nHe0, nHep, nHepp, ne
+
 
 def get_mass_fractions(T, XH, XHe):
     """
@@ -138,22 +178,21 @@ def get_mass_fractions(T, XH, XHe):
     XH: total mass fraction of all hydrogen species (HI + HII)
     XHe: total mass fraction of all helium species (HeI + HeII + HeIII)
     """
-  
+
     # first get number densities
     nH0, nHp, nHe0, nHep, nHepp, ne = get_number_densities(T, XH, XHe)
 
     # now get mass denities in units of atomic mass units
     mH0 = nH0
     mHp = nHp
-    mHe0 = 4. * nHe0
-    mHep = 4. * nHep
-    mHepp = 4. * nHepp
+    mHe0 = 4.0 * nHe0
+    mHep = 4.0 * nHep
+    mHepp = 4.0 * nHepp
     # neglect electron mass contributions
     #  me = ne * constants.m_e / constants.m_u
 
+    mtot = mH0 + mHp + mHe0 + mHep + mHepp  # + me
 
-    mtot = mH0 + mHp + mHe0 + mHep + mHepp # + me
-    
     XH0 = mH0 / mtot
     XHp = mHp / mtot
     XHe0 = mHe0 / mtot
