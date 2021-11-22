@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import constants
+import unyt
 import numpy as np
 
 
@@ -84,12 +85,21 @@ def get_number_densities(Temp, XH, XHe):
     XHe: total mass fraction of all helium species (HeI + HeII + HeIII)
     """
 
-    y = XHe / (4.0 - 4.0 * XHe)
+    # n_H = X_H * rho_gas / m_H =
+    # n_He = X_He * rho_gas / m_He = (1 - X_H) / (4 X_H) * n_H
+    #      =  X_He / 4(1 - X_He) * nH = y * nH
 
-    if Temp < constants.T_thresh:
+    if XHe == 1:
+        ynH = 1.0
+    else:
+        y = XHe / (4.0 - 4.0 * XHe)
+        ynH = y * XH
+
+    # NOTE: This is not the ionization threshold!
+    if Temp < 100 * unyt.K:
         nH0 = XH
         nHp = 0.0
-        nHe0 = y * XH
+        nHe0 = ynH
         nHep = 0.0
         nHepp = 0.0
 
@@ -158,7 +168,7 @@ def get_number_densities(Temp, XH, XHe):
 
         nH0 = nH * A_Hp / (A_Hp + G_H0)
         nHp = nH - nH0
-        nHep = y * nH / (1.0 + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp)
+        nHep = ynH / (1.0 + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp)
         nHe0 = nHep * (A_Hep + A_d) / G_He0
         nHepp = nHep * G_Hep / A_Hepp
 

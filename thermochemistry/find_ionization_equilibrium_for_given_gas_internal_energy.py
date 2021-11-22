@@ -23,12 +23,12 @@ from gas_functions import *
 # Set some initial conditions
 # --------------------------------
 
-XH = 0.25  # mass fraction of all hydrogen (HI + HII)
+XH = 0.76  # mass fraction of all hydrogen (HI + HII)
 XHe = 1.0 - XH  # mass fraction of all helium (HeI + HeII + HeIII)
 epsilon = 1e-12  # convergence criterion: relative to expected internal energy
 iter_max = 100  # max iterations for Newton-Raphson
 verbose = False  # am I talkative?
-npoints = 1000  # how many internal energies between u_min and u_max to compute for?
+npoints = 500  # how many internal energies between u_min and u_max to compute for?
 u_min = 1e11 * unyt.erg / unyt.g  # minimal specific internal energy to use
 u_max = 1e17 * unyt.erg / unyt.g  # maximal specific internal energy to use
 # NOTE: We use specific internal energy, which
@@ -97,6 +97,10 @@ def find_temperature_given_internal_energy(u_expect):
         mu_guess = mean_molecular_weight(XH0, XHp, XHe0, XHep, XHepp)
         T_guess = gas_temperature(u_expect, mu_guess)
 
+    # get updated mean molecular weight
+    XH0, XHp, XHe0, XHep, XHepp = get_mass_fractions(T_guess, XH, XHe)
+    mu_guess = mean_molecular_weight(XH0, XHp, XHe0, XHep, XHepp)
+
     # get first internal energy guess
     u_guess = internal_energy(T_guess, mu_guess)
 
@@ -155,7 +159,7 @@ def find_temperature_given_internal_energy(u_expect):
         u_guess = u_next
 
     if verbose:
-        print("Finished after", niter, "iterations")
+        print("Finished after", niter, "iterations; diff", 1.0 - du / u_expect)
 
     return T_guess
 
@@ -179,17 +183,17 @@ def plot_solution_3_figures(u, T, XH0, XHp, XHe0, XHep, XHepp):
     ax1.set_ylabel("specific internal energy [erg/g]")
     ax1.set_title("obtained results")
 
-    ax2.semilogx(T, XH0, label="$H^0$", ls=":", **plotkwargs)
-    ax2.semilogx(T, XHp, label="$H^+$", ls="-.", **plotkwargs)
-    ax2.semilogx(T, XHe0, label="$He^0$", ls=":", **plotkwargs)
-    ax2.semilogx(T, XHep, label="$He^+$", ls="-.", **plotkwargs)
-    ax2.semilogx(T, XHepp, label="$He^{++}$", ls="--", **plotkwargs)
+    ax2.semilogx(u, XH0, label="$H^0$", ls=":", **plotkwargs)
+    ax2.semilogx(u, XHp, label="$H^+$", ls="-.", **plotkwargs)
+    ax2.semilogx(u, XHe0, label="$He^0$", ls=":", **plotkwargs)
+    ax2.semilogx(u, XHep, label="$He^+$", ls="-.", **plotkwargs)
+    ax2.semilogx(u, XHepp, label="$He^{++}$", ls="--", **plotkwargs)
     ax2.semilogx(
-        T, XH0 + XHp + XHe0 + XHep + XHepp, "k", label="total", ls="-", **plotkwargs
+        u, XH0 + XHp + XHe0 + XHep + XHepp, "k", label="total", ls="-", **plotkwargs
     )
     ax2.legend()
-    #  ax2.set_xlabel("specific internal energy [erg/g]")
-    ax2.set_xlabel("gas temperature [K]")
+    ax2.set_xlabel("specific internal energy [erg/g]")
+    #  ax2.set_xlabel("gas temperature [K]")
     ax2.set_ylabel("gas mass fractions [1]")
     ax2.set_title("obtained results")
 
@@ -215,18 +219,19 @@ def plot_solution_3_figures(u, T, XH0, XHp, XHe0, XHep, XHepp):
         XHep_theory[i] = XHepc
         XHepp_theory[i] = XHeppc
 
-    ax3.semilogx(T, mu_theory)
-    ax3.set_xlabel("gas temperature [K]")
+    ax3.semilogx(u, mu_theory)
+    #  ax3.set_xlabel("gas temperature [K]")
+    ax3.set_xlabel("specific internal energy [erg/g]")
     ax3.set_ylabel("mean molecular weight [1]")
     ax3.set_title("Expected results")
 
-    ax4.semilogx(T, XH0_theory, label="$H^0$", ls=":", **plotkwargs)
-    ax4.semilogx(T, XHp_theory, label="$H^+$", ls="-.", **plotkwargs)
-    ax4.semilogx(T, XHe0_theory, label="$He^0$", ls=":", **plotkwargs)
-    ax4.semilogx(T, XHep_theory, label="$He^+$", ls="-.", **plotkwargs)
-    ax4.semilogx(T, XHepp_theory, label="$He^{++}$", ls="--", **plotkwargs)
+    ax4.semilogx(u, XH0_theory, label="$H^0$", ls=":", **plotkwargs)
+    ax4.semilogx(u, XHp_theory, label="$H^+$", ls="-.", **plotkwargs)
+    ax4.semilogx(u, XHe0_theory, label="$He^0$", ls=":", **plotkwargs)
+    ax4.semilogx(u, XHep_theory, label="$He^+$", ls="-.", **plotkwargs)
+    ax4.semilogx(u, XHepp_theory, label="$He^{++}$", ls="--", **plotkwargs)
     ax4.semilogx(
-        T,
+        u,
         XH0_theory + XHp_theory + XHe0_theory + XHep_theory + XHepp_theory,
         "k",
         label="total",
@@ -234,7 +239,8 @@ def plot_solution_3_figures(u, T, XH0, XHp, XHe0, XHep, XHepp):
         **plotkwargs
     )
     ax4.legend()
-    ax4.set_xlabel("gas temperature [K]")
+    #  ax4.set_xlabel("gas temperature [K]")
+    ax4.set_xlabel("specific internal energy [erg/g]")
     ax4.set_ylabel("gas mass fractions [1]")
     ax4.set_title("Expected results")
 
