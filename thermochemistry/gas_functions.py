@@ -89,17 +89,18 @@ def get_number_densities(Temp, XH, XHe):
     # n_He = X_He * rho_gas / m_He = (1 - X_H) / (4 X_H) * n_H
     #      =  X_He / 4(1 - X_He) * nH = y * nH
 
-    if XHe == 1:
-        ynH = 1.0
+    if XH == 0:
+        nH = 0.0
+        nHe = 1.0
     else:
-        y = XHe / (4.0 - 4.0 * XHe)
-        ynH = y * XH
+        nH = XH
+        nHe = XHe / 4
 
     # NOTE: This is not the ionization threshold!
     if Temp < 100 * unyt.K:
-        nH0 = XH
+        nH0 = nH
         nHp = 0.0
-        nHe0 = ynH
+        nHe0 = nHe
         nHep = 0.0
         nHepp = 0.0
 
@@ -163,12 +164,10 @@ def get_number_densities(Temp, XH, XHe):
         # Also, here we don't care about the actual number density, i.e.
         # about the volume, since it'll cancel out later when we compute
         # the mass fractions.
-        nH = XH
-        nHe = XHe
 
         nH0 = nH * A_Hp / (A_Hp + G_H0)
         nHp = nH - nH0
-        nHep = ynH / (1.0 + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp)
+        nHep = nHe / (1.0 + (A_Hep + A_d) / G_He0 + G_Hep / A_Hepp)
         nHe0 = nHep * (A_Hep + A_d) / G_He0
         nHepp = nHep * G_Hep / A_Hepp
 
