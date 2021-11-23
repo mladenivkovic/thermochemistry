@@ -97,7 +97,7 @@ def get_number_densities(Temp, XH, XHe):
         nHe = XHe / 4
 
     # NOTE: This is not the ionization threshold!
-    if Temp < 100 * unyt.K:
+    if Temp < 5000 * unyt.K:
         nH0 = nH
         nHp = 0.0
         nHe0 = nHe

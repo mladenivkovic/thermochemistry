@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-#--------------------------------------
+# --------------------------------------
 # Plot the ionization and recombination
 # rates for various temperatures
-#--------------------------------------
+# --------------------------------------
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -25,8 +25,9 @@ G_He0 = 2.38e-11 * np.sqrt(T) * np.exp(-285335.4 / T) / (1.0 + np.sqrt(T * 1e-5)
 # TODO: DOC
 G_Hep = 5.68e-12 * np.sqrt(T) * np.exp(-631515.0 / T) / (1.0 + np.sqrt(T * 1e-5))
 
+
 fig = plt.figure()
-ax1 = fig.add_subplot(1, 1, 1)
+ax1 = fig.add_subplot(1, 2, 1)
 ax1.loglog(T, A_Hp, label="$\\alpha_{H^+}$")
 ax1.loglog(T, A_d, label="$\\alpha_{d}$")
 ax1.loglog(T, A_Hep, label="$\\alpha_{He^{+}}$")
@@ -35,7 +36,29 @@ ax1.loglog(T, G_H0, "--", label="$\\Gamma_{H^{0}}$")
 ax1.loglog(T, G_He0, "--", label="$\\Gamma_{He^{0}}$")
 ax1.loglog(T, G_Hep, "--", label="$\\Gamma_{He^{+}}$")
 ax1.legend()
+ax1.set_title("Rates")
 ax1.set_xlabel("T [K]")
 ax1.set_ylabel("rates")
 ax1.set_ylim(1e-14, 1e-7)
+
+ax2 = fig.add_subplot(1, 2, 2)
+ax2.loglog(
+    T,
+    A_Hp / (A_Hp + G_H0),
+    label="$\\alpha_{H^{+}} / (\\alpha_{H^{+}} + \\Gamma_{H^{0}})$",
+)
+ax2.loglog(
+    T[T > 1e3],
+    ((A_Hep + A_d) / G_He0)[T > 1e3],
+    label="$(\\alpha_{He^{+}} + \\alpha_{d}) / \\Gamma_{He^{0}})$ for T > 1000 K",
+)
+ax2.loglog(T, G_Hep / A_Hepp, label="$(\\Gamma_{He^{+}} / \\alpha_{He^{++}})$")
+ax2.legend()
+G_Hep / A_Hepp
+
+#  temp = (A_Hep + A_d) / G_He0
+#  for i, t in enumerate(T):
+#      print(t, temp[i])
+
+
 plt.show()

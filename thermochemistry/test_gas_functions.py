@@ -150,24 +150,5 @@ def test_mean_molecular_weight():
     return
 
 
-#  def test_gas_temperature():
-#      """
-#
-#      """
-#
-#      nsamples = 100
-#      Temps = np.random.uniform(0, 1e7, nsamples) * unyt.K
-#      mus = np.random.uniform(0, 4, nsamples)
-#
-#      for i in range(nsamples):
-#          T = Temps[i]
-#          mu = mus[i]
-#
-#          u_calc = internal_energy(T, mu)
-#          print(u_calc, T, mu)
-#
-
-
 if __name__ == "__main__":
     test_mean_molecular_weight()
-    #  test_gas_temperature()
