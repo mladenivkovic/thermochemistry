@@ -116,7 +116,8 @@ def get_number_densities(Temp, XH, XHe):
             * 1.0
             / (1.0 + (T * 1e-6) ** 0.7)
         )
-        # TODO: DOC
+
+        # Dielectronic recombination rate for He+ in units of cm^3 s^-1
         A_d = (
             1.9e-3
             / T ** 1.5
@@ -133,7 +134,7 @@ def get_number_densities(Temp, XH, XHe):
             * 1.0
             / (1.0 + (T * 1e-6) ** 0.7)
         )
-        # ionization rate for H0 in units of cm^3 s^-1
+        # collisional ionization rate for H0 in units of cm^3 s^-1
         #  G_H0 = 1.17e-10 * np.sqrt(T) * np.exp(-157809.1 / T) * 1. / (1. + np.sqrt(T*1e-5))
         G_H0 = (
             5.85e-11
@@ -142,7 +143,7 @@ def get_number_densities(Temp, XH, XHe):
             * 1.0
             / (1.0 + np.sqrt(T * 1e-5))
         )
-        # TODO: DOC
+        # collisional ionization rate for He0 in units of cm^3 s^-1
         G_He0 = (
             2.38e-11
             * np.sqrt(T)
@@ -150,7 +151,7 @@ def get_number_densities(Temp, XH, XHe):
             * 1.0
             / (1.0 + np.sqrt(T * 1e-5))
         )
-        # TODO: DOC
+        # collisional ionization rate for He+ in units of cm^3 s^-1
         G_Hep = (
             5.68e-12
             * np.sqrt(T)
@@ -174,7 +175,6 @@ def get_number_densities(Temp, XH, XHe):
     # electron density
     ne = nHp + nHep + 2.0 * nHepp
 
-    # TODO: check units here
     return nH0, nHp, nHe0, nHep, nHepp, ne
 
 
