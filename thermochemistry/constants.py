@@ -12,6 +12,10 @@ kB = unyt.boltzmann_constant_cgs
 m_u = unyt.atomic_mass_unit_cgs
 # electron mass
 m_e = unyt.electron_mass_cgs
+# Planck constant
+h_planck = unyt.h
+# speed of light
+c = unyt.c
 
 # Threshold at which we assume gas fully ionized
 T_thresh = 1e5 * unyt.K
