@@ -25,7 +25,7 @@ from gas_functions import *
 
 XH = 0.76  # mass fraction of all hydrogen (HI + HII)
 XHe = 1.0 - XH  # mass fraction of all helium (HeI + HeII + HeIII)
-epsilon = 1e-12  # convergence criterion: relative to expected internal energy
+epsilon = 1e-3  # convergence criterion: relative to expected internal energy
 iter_max = 100  # max iterations for Newton-Raphson
 verbose = False  # am I talkative?
 npoints = 100  # how many internal energies between u_min and u_max to compute for?

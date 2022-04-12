@@ -6,24 +6,25 @@
 # --------------------------------------
 
 import numpy as np
+from thermochemistry_rates import thermochemistry_rates
 from matplotlib import pyplot as plt
 
 T = np.logspace(0, 11, 10000)
 
 # Recombination rate for H+ in units of cm^3 s^-1
-A_Hp = 8.40e-11 / np.sqrt(T) * (T * 1e-3) ** (-0.2) / (1.0 + (T * 1e-6) ** 0.7)
-# TODO: DOC
-A_d = 1.9e-3 / T ** 1.5 * np.exp(-470000.0 / T) * (1.0 + 0.3 * np.exp(-94000.0 / T))
+A_Hp = thermochemistry_rates.A_Hp(T)
+# Dielectronic recombination rate for He+ in units of cm^3 s^-1
+A_d = thermochemistry_rates.A_d(T)
 # Recombination rate for He+ in units of cm^3 s^-1
-A_Hep = 1.5e-10 / T ** 0.6353
+A_Hep = thermochemistry_rates.A_Hep(T)
 # Recombination rate for He++ in units of cm^3 s^-1
-A_Hepp = 3.36e-10 / np.sqrt(T) * (T * 1e-3) ** (-0.2) / (1.0 + (T * 1e-6) ** 0.7)
-# ionization rate for H0 in units of cm^3 s^-1
-G_H0 = 5.85e-11 * np.sqrt(T) * np.exp(-157809.1 / T) / (1.0 + np.sqrt(T * 1e-5))
-# TODO: DOC
-G_He0 = 2.38e-11 * np.sqrt(T) * np.exp(-285335.4 / T) / (1.0 + np.sqrt(T * 1e-5))
-# TODO: DOC
-G_Hep = 5.68e-12 * np.sqrt(T) * np.exp(-631515.0 / T) / (1.0 + np.sqrt(T * 1e-5))
+A_Hepp = thermochemistry_rates.A_Hepp(T)
+# collisional ionization rate for H0 in units of cm^3 s^-1
+G_H0 = thermochemistry_rates.G_H0(T)
+# collisional ionization rate for He0 in units of cm^3 s^-1
+G_He0 = thermochemistry_rates.G_He0(T)
+# collisional ionization rate for He+ in units of cm^3 s^-1
+G_Hep = thermochemistry_rates.G_Hep(T)
 
 
 fig = plt.figure()
@@ -36,9 +37,9 @@ ax1.loglog(T, G_H0, "--", label="$\\Gamma_{H^{0}}$")
 ax1.loglog(T, G_He0, "--", label="$\\Gamma_{He^{0}}$")
 ax1.loglog(T, G_Hep, "--", label="$\\Gamma_{He^{+}}$")
 ax1.legend()
-ax1.set_title("Rates")
+ax1.set_title("Rates ($\\alpha$: recombination. $\\Gamma$: collisional ioinization)")
 ax1.set_xlabel("T [K]")
-ax1.set_ylabel("rates")
+ax1.set_ylabel("rates [cm$^3$ s$^{-1}$]")
 ax1.set_ylim(1e-14, 1e-7)
 
 ax2 = fig.add_subplot(1, 2, 2)
@@ -50,15 +51,16 @@ ax2.loglog(
 ax2.loglog(
     T[T > 1e3],
     ((A_Hep + A_d) / G_He0)[T > 1e3],
-    label="$(\\alpha_{He^{+}} + \\alpha_{d}) / \\Gamma_{He^{0}})$ for T > 1000 K",
+    label="$(\\alpha_{He^{+}} + \\alpha_{d}) / \\Gamma_{He^{0}}$ for T > 1000 K",
 )
+ax2max = (((A_Hep + A_d) / G_He0)[T > 1e3]).max()
+ax2min = ((G_Hep / A_Hepp)[T > 1e3]).min()
+ax2.loglog([5e3, 5e3], [ax2min, ax2max], "k", label="T = 5000K", zorder = -3)
+
 ax2.loglog(T, G_Hep / A_Hepp, label="$(\\Gamma_{He^{+}} / \\alpha_{He^{++}})$")
 ax2.legend()
-G_Hep / A_Hepp
-
-#  temp = (A_Hep + A_d) / G_He0
-#  for i, t in enumerate(T):
-#      print(t, temp[i])
-
+ax2.set_xlabel("T [K]")
+ax2.set_ylabel("coefficients")
+ax2.set_ylim(ax2min, ax2max)
 
 plt.show()
