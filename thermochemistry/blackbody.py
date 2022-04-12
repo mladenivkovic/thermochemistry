@@ -7,6 +7,7 @@
 
 import numpy as np
 
+
 def B_nu(nu, T, kB, h_planck, c):
     """
     Return the blackbody energy density for

@@ -208,7 +208,6 @@ def get_number_densities_array(Temp, XH, XHe):
     # collisional ionization rate for He+ in units of cm^3 s^-1
     G_Hep = thermochemistry_rates.G_Hep(T)
 
-
     # Katz et al. 1996 eq. 33 - 38
     # Note: We assume all photoionization rates to be zero.
     # Also, here we don't care about the actual number density, i.e.

@@ -25,7 +25,7 @@ nu_min = 3.288e15  # Hz
 kB = constants.kB.v
 h_planck = constants.h_planck.v
 c = constants.c.v
-L_Sol = (1 *unyt.Lsun).to("erg/s").v
+L_Sol = (1 * unyt.Lsun).to("erg/s").v
 
 
 nu_max = 10 * nu_peak(T, kB, h_planck)

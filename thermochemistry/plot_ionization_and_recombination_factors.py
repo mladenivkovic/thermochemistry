@@ -55,7 +55,7 @@ ax2.loglog(
 )
 ax2max = (((A_Hep + A_d) / G_He0)[T > 1e3]).max()
 ax2min = ((G_Hep / A_Hepp)[T > 1e3]).min()
-ax2.loglog([5e3, 5e3], [ax2min, ax2max], "k", label="T = 5000K", zorder = -3)
+ax2.loglog([5e3, 5e3], [ax2min, ax2max], "k", label="T = 5000K", zorder=-3)
 
 ax2.loglog(T, G_Hep / A_Hepp, label="$(\\Gamma_{He^{+}} / \\alpha_{He^{++}})$")
 ax2.legend()
