@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-#----------------------------------------
-# Various cooling and ionization rates
-#----------------------------------------
+#----------------------------------------------------------
+# Various cooling and ionization rates. Values taken from 
+# https://ui.adsabs.harvard.edu/abs/1996ApJS..105...19K/
+#----------------------------------------------------------
 
 import numpy as np
 
@@ -55,7 +56,6 @@ class rates(object):
         
         """
         return 5.68e-12 * np.sqrt(T) * np.exp(-631515.0 / T) * 1.0 / (1.0 + np.sqrt(T * 1e-5))
-
 
 
 thermochemistry_rates = rates()

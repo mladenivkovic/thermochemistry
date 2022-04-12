@@ -7,6 +7,7 @@
 import constants
 import unyt
 import numpy as np
+from thermochemistry_rates import thermochemistry_rates
 
 
 def mean_molecular_weight(XH0, XHp, XHe0, XHep, XHepp):
@@ -109,56 +110,19 @@ def get_number_densities(Temp, XH, XHe):
         Temp.convert_to_cgs()
         T = Temp.v
         # Recombination rate for H+ in units of cm^3 s^-1
-        A_Hp = (
-            8.40e-11
-            / np.sqrt(T)
-            * (T * 1e-3) ** (-0.2)
-            * 1.0
-            / (1.0 + (T * 1e-6) ** 0.7)
-        )
-
+        A_Hp = thermochemistry_rates.A_Hp(T)
         # Dielectronic recombination rate for He+ in units of cm^3 s^-1
-        A_d = (
-            1.9e-3
-            / T ** 1.5
-            * np.exp(-470000.0 / T)
-            * (1.0 + 0.3 * np.exp(-94000.0 / T))
-        )
+        A_d = thermochemistry_rates.A_d(T)
         # Recombination rate for He+ in units of cm^3 s^-1
-        A_Hep = 1.5e-10 / T ** 0.6353
+        A_Hep = thermochemistry_rates.A_Hep(T)
         # Recombination rate for He++ in units of cm^3 s^-1
-        A_Hepp = (
-            3.36e-10
-            / np.sqrt(T)
-            * (T * 1e-3) ** (-0.2)
-            * 1.0
-            / (1.0 + (T * 1e-6) ** 0.7)
-        )
+        A_Hepp = thermochemistry_rates.A_Hepp(T)
         # collisional ionization rate for H0 in units of cm^3 s^-1
-        #  G_H0 = 1.17e-10 * np.sqrt(T) * np.exp(-157809.1 / T) * 1. / (1. + np.sqrt(T*1e-5))
-        G_H0 = (
-            5.85e-11
-            * np.sqrt(T)
-            * np.exp(-157809.1 / T)
-            * 1.0
-            / (1.0 + np.sqrt(T * 1e-5))
-        )
+        G_H0 = thermochemistry_rates.G_H0(T)
         # collisional ionization rate for He0 in units of cm^3 s^-1
-        G_He0 = (
-            2.38e-11
-            * np.sqrt(T)
-            * np.exp(-285335.4 / T)
-            * 1.0
-            / (1.0 + np.sqrt(T * 1e-5))
-        )
+        G_He0 = thermochemistry_rates.G_He0(T)
         # collisional ionization rate for He+ in units of cm^3 s^-1
-        G_Hep = (
-            5.68e-12
-            * np.sqrt(T)
-            * np.exp(-631515.0 / T)
-            * 1.0
-            / (1.0 + np.sqrt(T * 1e-5))
-        )
+        G_Hep = thermochemistry_rates.G_Hep(T)
 
         # Katz et al. 1996 eq. 33 - 38
         # Note: We assume all photoionization rates to be zero.
@@ -230,29 +194,20 @@ def get_number_densities_array(Temp, XH, XHe):
     ionized = np.logical_not(neutral)
 
     # Recombination rate for H+ in units of cm^3 s^-1
-    A_Hp = (
-        8.40e-11 / np.sqrt(T) * (T * 1e-3) ** (-0.2) * 1.0 / (1.0 + (T * 1e-6) ** 0.7)
-    )
+    A_Hp = thermochemistry_rates.A_Hp(T)
     # Dielectronic recombination rate for He+ in units of cm^3 s^-1
-    A_d = 1.9e-3 / T ** 1.5 * np.exp(-470000.0 / T) * (1.0 + 0.3 * np.exp(-94000.0 / T))
+    A_d = thermochemistry_rates.A_d(T)
     # Recombination rate for He+ in units of cm^3 s^-1
-    A_Hep = 1.5e-10 / T ** 0.6353
+    A_Hep = thermochemistry_rates.A_Hep(T)
     # Recombination rate for He++ in units of cm^3 s^-1
-    A_Hepp = (
-        3.36e-10 / np.sqrt(T) * (T * 1e-3) ** (-0.2) * 1.0 / (1.0 + (T * 1e-6) ** 0.7)
-    )
+    A_Hepp = thermochemistry_rates.A_Hepp(T)
     # collisional ionization rate for H0 in units of cm^3 s^-1
-    G_H0 = (
-        5.85e-11 * np.sqrt(T) * np.exp(-157809.1 / T) * 1.0 / (1.0 + np.sqrt(T * 1e-5))
-    )
+    G_H0 = thermochemistry_rates.G_H0(T)
     # collisional ionization rate for He0 in units of cm^3 s^-1
-    G_He0 = (
-        2.38e-11 * np.sqrt(T) * np.exp(-285335.4 / T) * 1.0 / (1.0 + np.sqrt(T * 1e-5))
-    )
+    G_He0 = thermochemistry_rates.G_He0(T)
     # collisional ionization rate for He+ in units of cm^3 s^-1
-    G_Hep = (
-        5.68e-12 * np.sqrt(T) * np.exp(-631515.0 / T) * 1.0 / (1.0 + np.sqrt(T * 1e-5))
-    )
+    G_Hep = thermochemistry_rates.G_Hep(T)
+
 
     # Katz et al. 1996 eq. 33 - 38
     # Note: We assume all photoionization rates to be zero.
