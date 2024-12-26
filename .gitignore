@@ -13,3 +13,4 @@ Logs/
 **/__pycache__
 glossar-latex
 compile_commands.json
+*png
