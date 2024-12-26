@@ -1,6 +1,9 @@
 Here are some python scripts containing thermochemistry related tests,
 plots, methods etc.
 
+NOTE: The content has been moved to SWIFTSIM/swiftsim-rt-tools. Look there
+for updated versions.
+
 
 ## Scripts intended for import:
 
